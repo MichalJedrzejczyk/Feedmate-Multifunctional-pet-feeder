@@ -78,3 +78,9 @@ In the future, I plan to replace the current Arduino-based hardware with an ESP3
 ## Author
 
 Michał Jędrzejczyk
+
+## Documentation
+
+- [Components](docs/components.md)
+- [Wiring](docs/wiring.md)
+- [User Manual](docs/user-manual.md)
