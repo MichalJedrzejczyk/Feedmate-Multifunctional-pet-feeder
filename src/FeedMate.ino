@@ -3,7 +3,7 @@
 
 // =====================================================
 // FeedMate - Multifunctional Pet Feeder
-// Arduino Mega 2560 version
+// Arduino Mega 2560 Version
 //
 // Features:
 // - Manual feeding
@@ -11,20 +11,26 @@
 // - LCD menu interface
 // - 4x4 keypad navigation
 // - Servo-controlled food dispensing
-// - Buzzer feedback
+// - Buzzer sound feedback
 // - LCD sleep mode
 //
-// Planned future improvements:
-// - ESP32-based hardware version
+// Future plans:
+// - ESP32-based version
 // - Wi-Fi connectivity
-// - Mobile application for remote control and monitoring
+// - Mobile app for remote control and monitoring
 // =====================================================
+
+
+// =====================================================
+// FUNCTION DECLARATIONS
+// =====================================================
+void scheduleNextAutomaticFeed();
 
 
 // =====================================================
 // LCD CONFIGURATION
 // =====================================================
-// Change LCD_COLS to 16 if you are using a 16x2 display.
+// Change to 16 if you use a 16x2 LCD.
 const byte LCD_COLS = 20;
 const byte LCD_ROWS = 2;
 
@@ -78,7 +84,7 @@ bool lastKeyState[4][4];
 
 
 // =====================================================
-// SCREEN AND MENU STATE
+// SCREEN STATE
 // =====================================================
 enum Screen {
   SCREEN_START,
@@ -97,6 +103,10 @@ enum EditField {
 Screen currentScreen = SCREEN_START;
 EditField currentEditField = EDIT_NONE;
 
+
+// =====================================================
+// MENU STATE
+// =====================================================
 const int MENU_LENGTH = 5;
 int menuIndex = 0;
 
@@ -115,7 +125,7 @@ Settings settings;
 
 
 // =====================================================
-// RUNTIME STATE
+// RUNTIME VARIABLES
 // =====================================================
 String editBuffer = "";
 bool editFresh = true;
@@ -153,6 +163,7 @@ byte bottomScrollOffset = 0;
 // =====================================================
 void clearLcdRow(byte row) {
   lcd.setCursor(0, row);
+
   for (byte i = 0; i < LCD_COLS; i++) {
     lcd.print(' ');
   }
@@ -165,7 +176,7 @@ void printLcdRow(byte row, const String &text, String &lastPrintedText) {
     output = output.substring(0, LCD_COLS);
   }
 
-  // Avoid unnecessary LCD rewriting to reduce flickering.
+  // Avoid rewriting the same LCD content to reduce flickering.
   if (output == lastPrintedText) {
     return;
   }
@@ -205,18 +216,18 @@ void renderUi() {
     return;
   }
 
-  bool shouldUpdateScroll = false;
+  bool updateScroll = false;
 
   if (millis() - lastScrollAt >= SCROLL_INTERVAL_MS) {
     lastScrollAt = millis();
-    shouldUpdateScroll = true;
+    updateScroll = true;
   }
 
-  if (topText.length() > LCD_COLS && shouldUpdateScroll) {
+  if (topText.length() > LCD_COLS && updateScroll) {
     topScrollOffset++;
   }
 
-  if (bottomText.length() > LCD_COLS && shouldUpdateScroll) {
+  if (bottomText.length() > LCD_COLS && updateScroll) {
     bottomScrollOffset++;
   }
 
@@ -387,7 +398,7 @@ char readKeyOnce() {
         lastKeyState[row][col] = true;
         digitalWrite(rowPins[row], HIGH);
 
-        delay(120); // Simple debounce delay
+        delay(120); // Simple debounce
         return key;
       }
 
@@ -477,15 +488,15 @@ void drawMenuScreen() {
 void drawStatusScreen() {
   unsigned long openTimeSec = settings.openTimeMs / 1000UL;
 
-  String status = "Open: " + String(openTimeSec) + "s  ";
+  String statusText = "Open: " + String(openTimeSec) + "s  ";
 
   if (settings.autoModeEnabled) {
-    status += "AUTO:" + formatInterval(settings.autoIntervalSec);
+    statusText += "AUTO:" + formatInterval(settings.autoIntervalSec);
   } else {
-    status += "AUTO:OFF";
+    statusText += "AUTO:OFF";
   }
 
-  setScreen(SCREEN_STATUS, status);
+  setScreen(SCREEN_STATUS, statusText);
 }
 
 void showActionScreen(const String &message, unsigned long durationMs) {
@@ -563,9 +574,12 @@ void performFeeding(unsigned long openTimeMs, bool automaticMode) {
     showActionScreen("Feeding...", 700);
   }
 
+  renderUi();
+
   openAndCloseFeeder(openTimeMs);
 
   showActionScreen("Done.", 1500);
+  renderUi();
 }
 
 
@@ -649,6 +663,7 @@ void loop() {
 
   wakeLcd();
   playClickSound();
+
 
   // =====================================================
   // START SCREEN CONTROLS
@@ -829,5 +844,7 @@ void loop() {
       performFeeding(settings.openTimeMs, false);
       return;
     }
+
+    return;
   }
 }
