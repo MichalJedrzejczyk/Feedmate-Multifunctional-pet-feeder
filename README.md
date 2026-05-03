@@ -2,6 +2,10 @@
 
 FeedMate is an Arduino-based multifunctional pet feeder designed to automate food dispensing using a servo mechanism, LCD interface, keypad navigation and configurable feeding modes.
 
+## Project Preview
+
+![FeedMate Prototype](image/project-overview.png)
+
 ## Features
 
 - Manual feeding mode
@@ -58,6 +62,18 @@ FeedMate is an Arduino-based multifunctional pet feeder designed to automate foo
 | # | Status / clear input |
 | * | Delete digit |
 
+## Documentation
+
+- [Components](docs/components.md)
+- [Wiring](docs/wiring.md)
+- [User Manual](docs/user-manual.md)
+
+## Project Photos
+
+### Internal Electronics
+
+![Internal Electronics](image/electronics-inside.png)
+
 ## Project Status
 
 Prototype version. The project currently includes working LCD menu navigation, configurable feeding time, automatic feeding mode, buzzer feedback and servo-controlled dispensing.
@@ -78,9 +94,3 @@ In the future, I plan to replace the current Arduino-based hardware with an ESP3
 ## Author
 
 Michał Jędrzejczyk
-
-## Documentation
-
-- [Components](docs/components.md)
-- [Wiring](docs/wiring.md)
-- [User Manual](docs/user-manual.md)
